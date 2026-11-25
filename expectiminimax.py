@@ -19,13 +19,21 @@ def chance_outcomes(board, col):
     return [(col, 1.0)]
 
 
-def expectiminimax(board, depth, maximizing, node):
+def expectiminimax(board, depth, maximizing, node, cache=None):
+    if cache is None:
+        cache = {}
     stats["nodes"] += 1
     node.order = next_step()
+    key = (tuple(map(tuple, board)), depth, maximizing)
+    if key in cache:
+        node.value = cache[key]
+        node.note = "reused (same board already evaluated)"
+        return node.value
     cols = ordered_columns(board)
     if depth == 0 or not cols:
         node.value = heuristic(board)
         node.leaf = True
+        cache[key] = node.value
         return node.value
     piece = AI if maximizing else HUMAN
     best = -math.inf if maximizing else math.inf
@@ -38,12 +46,13 @@ def expectiminimax(board, depth, maximizing, node):
         for real_col, prob in chance_outcomes(board, c):
             child = Node("MIN" if maximizing else "MAX", real_col, prob, parent=chance)
             chance.children.append(child)
-            expected += prob * expectiminimax(drop_piece(board, real_col, piece), depth - 1, not maximizing, child)
+            expected += prob * expectiminimax(drop_piece(board, real_col, piece), depth - 1, not maximizing, child, cache)
         chance.value = round(expected, 2)
         if (maximizing and chance.value > best) or (not maximizing and chance.value < best):
             best = chance.value
             node.best = c
     node.value = best
+    cache[key] = best
     return best
 
 

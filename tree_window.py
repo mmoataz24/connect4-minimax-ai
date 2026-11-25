@@ -261,7 +261,9 @@ class TreeWindow:
             text = f"disc falls in column {node.move} with probability {node.prob}"
         else:
             text = f"{who} tries column {node.move}"
-        if node.leaf:
+        if node.note and not node.children:
+            text += f" -> {node.note}, value = {fmt_value(node.value)}"
+        elif node.leaf:
             text += f" -> depth limit reached, heuristic h = {fmt_value(node.value)}"
         elif node.kind != "CHANCE":
             text += f" -> {node.kind} node"

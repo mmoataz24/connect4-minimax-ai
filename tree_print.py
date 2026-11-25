@@ -24,6 +24,8 @@ def node_label(node):
     if node.leaf:
         return text + f"LEAF  h={fmt_value(node.value)}"
     text += f"{node.kind}  value={fmt_value(node.value)}"
+    if node.note:
+        text += "  (reused)"
     if node.best is not None:
         text += f"  best=col {node.best}"
     return text

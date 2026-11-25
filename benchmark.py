@@ -16,7 +16,7 @@ def benchmark():
     print("-" * 60)
     for k in range(1, 7):
         for name in ("minimax", "alphabeta", "expectiminimax"):
-            if name == "expectiminimax" and k > 4:
+            if name == "expectiminimax" and k > 6:
                 continue
             col, root, nodes, elapsed = choose_move(board, name, k)
             print(f"{k:<4}{name:<18}{nodes:<12}{elapsed:<12.4f}{col:<6}{fmt_value(root.value)}")
